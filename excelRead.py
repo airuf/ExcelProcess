@@ -1,10 +1,17 @@
 # -.*- coding: UTF-8 -*-
 import xlrd
 
+class Motor1:
+    def __init__(self):
+        self.motor_dic = {}
+
+    def add_data(self, name):
+        self.motor_dic.setdefault(name, BasicInfo(name))
+
 class BasicInfo:
-    def __init__(self, name, path):
+    def __init__(self, name):
         self.name = name;
-        self.
+
 
 class AHS_xlrd:
     def __init__(self, name, path):
@@ -22,16 +29,36 @@ class AHS_xlrd:
     # def performance_members(self):
     #
 
-path1 = 'C:/Users/LMAN/Desktop/PYTHON TEST/exclT/1.xlsx'
+# path1 = 'C:/Users/LMAN/Desktop/PYTHON TEST/exclT/1.xlsx'
+#
+# workbook = xlrd.open_workbook(path1)
+# sheet = workbook.sheet_by_index(0)
+# # print(sheet.name,sheet.nrows,sheet.ncols)
+# rows = sheet.row_values(3)
+# # print("rows: ", rows)
 
+
+
+# save dic into father class
+mydata = Motor1()
+mydata.add_data('name1')
+a = BasicInfo('name1')
+if 'name1' not in mydata.motor_dic.keys():
+    print("not get name1")
+else:
+    print("get name 1")
+    print(mydata.motor_dic['name1'])
+print(mydata.motor_dic)
+mydata.add_data('name2')
+print(mydata.motor_dic)
+
+path1 = 'C:/Users/LMAN/Desktop/PYTHON TEST/exclT/7月总体数据.xlsx'
 workbook = xlrd.open_workbook(path1)
 sheet = workbook.sheet_by_index(0)
 # print(sheet.name,sheet.nrows,sheet.ncols)
-rows = sheet.row_values(3)
-# print("rows: ", rows)
-
-
-
+rows = sheet.row_values(0)
+print(len(rows))
+print("rows: ", rows)
 
 # print(workbook.sheet_names())
 # print(workbook)
@@ -160,7 +187,9 @@ class OrderInfo:
     def is_order_integrity(self):
         for key,value in vars(self).items():
             if value is False:
-                raise AssertionError("the %s is null", key)
+                raise AssertionError("the #" + key + "# is null")
+
+
 
 
 
@@ -170,16 +199,32 @@ class OrderInfo:
 # 手机 phone number
 # 订单 orders
 #
+# 成交单数合计    numbers of orders
+# 商家服务费合计   all store service fee
+# 店员服务费合计   all clerk service fee
+# 金蛋金额合计    all gloden egg amounts
+# 店员收入合计    all income
+
+
 class ClerkInfo():
     def __init__(self, name):
         self.name = name
         self.phone_number = 0
-        self.orders = []
+        self.orders = {}
+        self.number_of_orders = 0
+        self.all_store_service_fee = 0
+        self.all_clerk_service_fee = 0
+        self.all_gloden_egg_amounts = 0
+        self.all_income = 0
 
     def create_order(self, order_number):
-        self.orders.append(OrderInfo(order_number))
+        if order_number not in self.orders:
+            self.orders.setdefault(order_number, OrderInfo(order_number))
 
-    def set_order_data(self, order_number):
+    def total_result(self):
+        # add up to all orders
+        a = 1
+
 
 
 ## 所属总账户 ##
@@ -188,8 +233,10 @@ class ClerkInfo():
 class MasterAccount():
     def __init__(self, name):
         self.name = name
+        self.clerks = {}
 
-
+    def add_create(self, name):
+        self.clerks.setdefault(name, ClerkInfo(name))
 
 
 
