@@ -39,26 +39,20 @@ class AHS_xlrd:
 
 
 
-# save dic into father class
-mydata = Motor1()
-mydata.add_data('name1')
-a = BasicInfo('name1')
-if 'name1' not in mydata.motor_dic.keys():
-    print("not get name1")
-else:
-    print("get name 1")
-    print(mydata.motor_dic['name1'])
-print(mydata.motor_dic)
-mydata.add_data('name2')
-print(mydata.motor_dic)
+## save dic into father class
+# mydata = Motor1()
+# mydata.add_data('name1')
+# a = BasicInfo('name1')
+# if 'name1' not in mydata.motor_dic.keys():
+#     print("not get name1")
+# else:
+#     print("get name 1")
+#     print(mydata.motor_dic['name1'])
+# print(mydata.motor_dic)
+# mydata.add_data('name2')
+# print(mydata.motor_dic)
+#
 
-path1 = 'C:/Users/LMAN/Desktop/PYTHON TEST/exclT/7月总体数据.xlsx'
-workbook = xlrd.open_workbook(path1)
-sheet = workbook.sheet_by_index(0)
-# print(sheet.name,sheet.nrows,sheet.ncols)
-rows = sheet.row_values(0)
-print(len(rows))
-print("rows: ", rows)
 
 # print(workbook.sheet_names())
 # print(workbook)
@@ -113,41 +107,63 @@ print("rows: ", rows)
 
 ## 单子信息 ##
 ## order infor ##
-# 订单号 number of order
-# 下单价 contract price
-# 成交价 final price
-# 商家服务费 store service fee
-# 店长服务费 store manager service fee
-# 店员服务费 clerk service fee
-# 金蛋金额 gloden egg amount
-# 下单时间 order time
-# 订单状态 order state
-# 成交时间 transcation time
-# 验货状态 inspection time
-# 发货单号 number of deilvery
-# 实付旧机款 actual payment
-# 旧机款结算账户 settlement account
+# 订单号 number of order                       rows[0]
+
+# 所属总账户名称 master account name           rows[37]
+# 所属门店名称 store name                      rows[42]
+# 经办人姓名 manager name                      rows[51]
+
+# 下单价 contract price                        rows[6]
+# 成交价 final price                           rows[10]
+# 商家服务费 store service fee                 rows[15]
+# 店长服务费 store manager service fee         rows[16]
+# 店员服务费 clerk service fee                 rows[17]
+# 金蛋金额 gloden egg amount                   rows[20]
+# 订单状态 order state                         rows[30]
+# 验货状态 inspection state                    rows[31]
+# 下单时间 order time                          rows[53]
+# 成交时间 transcation time                    rows[54]
+# 发货单号 number of deilvery                  rows[55]
+# 实付旧机款 actual payment                    rows[56]
+# 旧机款结算账户 settlement account            rows[57]
 
 class OrderInfo:
     def __init__(self, order_number):
         self.order_number.key = order_number
+
+        self.master_account_name = False
+        self.store_name = False
+        self.manager_name = False
+
         self.contract_price = False
         self.final_price = False
         self.store_service_fee = False
         self.store_manager_service_fee = False
         self.clerk_service_fee = False
         self.gloden_egg_amount = False
-        self.order_time = False
         self.order_state = False
-        self.transcation_time = False
+        self.order_time = False
         self.inspection_time = False
+        self.transcation_time = False
         self.number_of_deilvery = False
         self.actual_payment = False
         self.settlement_account = False
 
+####
     def set_contract_price(self, contract_price):
         self.contract_price = contract_price
 
+####
+    def set_master_accout_name(self, master_account_name):
+        self.master_account_name = master_account_name
+
+    def set_store_name(self, store_name):
+        self.store_name = store_name
+
+    def set_manager_name(self, manager_name):
+        self.manager_name = manager_name
+
+####
     def set_final_price(self, final_price):
         self.final_price = final_price
 
@@ -163,17 +179,17 @@ class OrderInfo:
     def set_gloden_egg_amount(self, gloden_egg_amount):
         self.gloden_egg_amount = gloden_egg_amount
 
-    def set_order_time(self, order_time):
-        self.order_time = order_time
-
     def set_order_state(self, order_state):
         self.order_state = order_state
 
+    def set_inspection_state(self, inspection_state):
+        self.inspection_state = inspection_state
+
+    def set_order_time(self, order_time):
+        self.order_time = order_time
+
     def set_transcation_time(self, transcation_time):
         self.transcation_time = transcation_time
-
-    def set_inspection_time(self, inspection_time):
-        self.inspection_time = inspection_time
 
     def set_number_of_delivery(self, number_of_delivery):
         self.number_of_delivery = number_of_delivery
@@ -226,6 +242,16 @@ class ClerkInfo():
         a = 1
 
 
+## 所属门店名称 ##
+## store name  ##       rows[42]
+class StoreInfo():
+    def __init__(self, name):
+        self.name = name
+        self.clerks = {}
+
+    def add_create_clerk(self, name):
+        self.store.setdefault(name, ClerkInfo(name))
+
 
 ## 所属总账户 ##
 ## master account ##
@@ -233,12 +259,115 @@ class ClerkInfo():
 class MasterAccount():
     def __init__(self, name):
         self.name = name
-        self.clerks = {}
+        self.store = {}
 
-    def add_create(self, name):
-        self.clerks.setdefault(name, ClerkInfo(name))
-
-
+    def add_create_store(self, name):
+        self.store.setdefault(name, StoreInfo(name))
 
 
+#####  step 1  建立总公司  #####
+HY = MasterAccount('福建泉州市华远电讯有限公司')
 
+#####          step 2  扫描单子         #####
+#####          step 3  单子分店         #####
+#####          step 3  单子分人         #####
+#####          step 4  单子存到人里     #####
+
+## get data ##
+# path1 = 'C:/Users/LMAN/Desktop/PYTHON TEST/exclT/7月总体数据.xlsx'  ## win 7
+path1 = 'C:/Users/lin/Desktop/ExcelProcess/data/7月总体数据.xlsx'
+workbook = xlrd.open_workbook(path1)
+sheet = workbook.sheet_by_index(0)
+# print(sheet.name, sheet.nrows, sheet.ncols)
+# rows = sheet.row_values(0)
+# for index, value in enumerate(rows):
+#     print("索引：" + str(index), ", 值：" + value)
+
+
+### 遍历总体数据，找出限定条件内的  单子， 放进职员的 单子表中 #######
+### 限定条件 ###
+### 37 公司名称 ####
+### 30 订单状态  ！=交易取消    ####  6 下单价 > 5    ######
+####  职员表  ######
+####  51  经办人姓名    #### 42 门店名称  ###
+x = 0
+for i in range(1, sheet.nrows):
+    if sheet.row_values(i)[37] == HY.name:
+        if sheet.row_values(i)[30] != "交易取消" and sheet.row_values(i)[6] > 5:
+            x = x + 1
+
+            # if sheet.row_values(i)[51] in clerk_order_dic.keys():
+            #     clerk_order_dic[sheet.row_values(i)[51]] += 1
+        else:
+            a = 1
+            # print(i, sheet.row_values(i)[51], sheet.row_values(i)[42], sheet.row_values(i)[30])
+print("x", x)
+
+
+
+# print("rows: ", rows)
+
+## 单子信息 ##
+## order infor ##
+# 订单号 number of order                       rows[0]
+
+# 所属总账户名称 master account name           rows[37]
+# 所属门店名称 store name                      rows[42]
+# 经办人姓名 manager name                      rows[51]
+
+# 下单价 contract price                        rows[6]
+# 成交价 final price                           rows[10]
+# 商家服务费 store service fee                 rows[15]
+# 店长服务费 store manager service fee         rows[16]
+# 店员服务费 clerk service fee                 rows[17]
+# 金蛋金额 gloden egg amount                   rows[20]
+# 订单状态 order state                         rows[30]
+# 验货状态 inspection state                    rows[31]
+# 下单时间 order time                          rows[53]
+# 成交时间 transcation time                    rows[54]
+# 发货单号 number of deilvery                  rows[55]
+# 实付旧机款 actual payment                    rows[56]
+# 旧机款结算账户 settlement account            rows[57]
+
+
+
+
+## save order ##
+x = 0
+y = 0
+clerk_list = []
+path2 = 'C:/Users/lin/Desktop/ExcelProcess/data/华远数据转存.xlsx'
+workbook2 = xlrd.open_workbook(path2)
+sheet2 = workbook2.sheet_by_index(0)
+print(sheet2.name, sheet2.nrows, sheet2.ncols)
+rows2 = sheet2.row_values(0)
+clerk_order_dic = {}
+for i in range(2, sheet2.nrows):
+    #print(sheet2.row_values(i)[2])
+    clerk_list.append(sheet2.row_values(i)[2])
+    clerk_order_dic.setdefault(sheet2.row_values(i)[2], 0)
+    #print(len(clerk_list))
+store_list = ['九一手机城', '晋江泉安店', '九一华为专卖店', '南安新华厅', '商务手机城', '九一oppo专卖店', \
+                      '华远田安店', '中骏世界城华为体验店', '华远浮桥店', '永春华为店', '泉港南埔厅', '智天智能oppo体', \
+                      '智能体验城', '晋江泉安新店', '九一百源店', '智天智能水头店', '洛江双阳店', '南安官桥店']
+
+
+
+
+
+
+sum = 0
+for i in clerk_order_dic.values():
+    sum += i
+print("sum : ",sum)
+# print(clerk_order_dic)
+
+
+for i in range(2, sheet2.nrows):
+    #print(sheet2.row_values(i)[2])
+    if sheet2.row_values(i)[2] in clerk_order_dic.keys():
+        if sheet2.row_values(i)[3] != clerk_order_dic[sheet2.row_values(i)[2]]:
+            a =1
+            #print("#####下面是问题单#####")
+        #print('名字',   sheet2.row_values(i)[2],  '统计的',   sheet2.row_values(i)[3],  '原生数据里的',   clerk_order_dic[sheet2.row_values(i)[2]])
+print(x)
