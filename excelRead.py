@@ -129,7 +129,7 @@ class AHS_xlrd:
 
 class OrderInfo:
     def __init__(self, order_number):
-        self.order_number.key = order_number
+        self.order_number = order_number
 
         self.master_account_name = False
         self.store_name = False
@@ -233,9 +233,8 @@ class ClerkInfo():
         self.all_gloden_egg_amounts = 0
         self.all_income = 0
 
-    def create_order(self, order_number):
-        if order_number not in self.orders:
-            self.orders.setdefault(order_number, OrderInfo(order_number))
+    def add_create_order(self, order_number):
+        self.orders.setdefault(order_number, OrderInfo(order_number))
 
     def total_result(self):
         # add up to all orders
@@ -250,7 +249,7 @@ class StoreInfo():
         self.clerks = {}
 
     def add_create_clerk(self, name):
-        self.store.setdefault(name, ClerkInfo(name))
+        self.clerks.setdefault(name, ClerkInfo(name))
 
 
 ## 所属总账户 ##
@@ -272,30 +271,48 @@ HY = MasterAccount('福建泉州市华远电讯有限公司')
 #####          step 3  单子分店         #####
 #####          step 3  单子分人         #####
 #####          step 4  单子存到人里     #####
-
 ## get data ##
 # path1 = 'C:/Users/LMAN/Desktop/PYTHON TEST/exclT/7月总体数据.xlsx'  ## win 7
 path1 = 'C:/Users/lin/Desktop/ExcelProcess/data/7月总体数据.xlsx'
 workbook = xlrd.open_workbook(path1)
 sheet = workbook.sheet_by_index(0)
-# print(sheet.name, sheet.nrows, sheet.ncols)
-# rows = sheet.row_values(0)
-# for index, value in enumerate(rows):
-#     print("索引：" + str(index), ", 值：" + value)
-
 
 ### 遍历总体数据，找出限定条件内的  单子， 放进职员的 单子表中 #######
-### 限定条件 ###
+### 限定条件 ###  sheet.row_values(i)[num]###
 ### 37 公司名称 ####
 ### 30 订单状态  ！=交易取消    ####  6 下单价 > 5    ######
 ####  职员表  ######
-####  51  经办人姓名    #### 42 门店名称  ###
-x = 0
+####  51  经办人姓名    #### 42 门店名称  ### 0 订单号 number of order   #####
+x= 0
 for i in range(1, sheet.nrows):
     if sheet.row_values(i)[37] == HY.name:
         if sheet.row_values(i)[30] != "交易取消" and sheet.row_values(i)[6] > 5:
-            x = x + 1
+            HY.add_create_store(sheet.row_values(i)[42])
+            HY.store[sheet.row_values(i)[42]].add_create_clerk(sheet.row_values(i)[51])
+            HY.store[sheet.row_values(i)[42]].clerks[sheet.row_values(i)[51]].add_create_order(sheet.row_values(i)[0])
 
+            _order = HY.store[sheet.row_values(i)[42]].clerks[sheet.row_values(i)[51]].orders[sheet.row_values(i)[0]]
+
+            _order.master_account_name = sheet.row_values(i)[37]
+            _order.store_name = sheet.row_values(i)[42]
+            _order.manager_name = sheet.row_values(i)[51]
+
+            _order.contract_price = sheet.row_values(i)[6]
+            _order.final_price = sheet.row_values(i)[10]
+            _order.store_service_fee = sheet.row_values(i)[15]
+            _order.store_manager_service_fee = sheet.row_values(i)[16]
+            _order.clerk_service_fee = sheet.row_values(i)[17]
+            _order.gloden_egg_amount = sheet.row_values(i)[20]
+            _order.order_state = sheet.row_values(i)[30]
+            _order.order_time = sheet.row_values(i)[31]
+            _order.inspection_time = sheet.row_values(i)[53]
+            _order.transcation_time = sheet.row_values(i)[54]
+            _order.number_of_deilvery = sheet.row_values(i)[55]
+            _order.actual_payment = sheet.row_values(i)[56]
+            _order.settlement_account = sheet.row_values(i)[57]
+
+            print(HY.store[sheet.row_values(i)[42]].clerks[sheet.row_values(i)[51]])
+            x += 1
             # if sheet.row_values(i)[51] in clerk_order_dic.keys():
             #     clerk_order_dic[sheet.row_values(i)[51]] += 1
         else:
@@ -329,6 +346,13 @@ print("x", x)
 # 实付旧机款 actual payment                    rows[56]
 # 旧机款结算账户 settlement account            rows[57]
 
+path1 = 'C:/Users/lin/Desktop/ExcelProcess/data/7月总体数据.xlsx'
+workbook = xlrd.open_workbook(path1)
+sheet = workbook.sheet_by_index(0)
+# print(sheet.name, sheet.nrows, sheet.ncols)
+# rows = sheet.row_values(0)
+# for index, value in enumerate(rows):
+#     print("索引：" + str(index), ", 值：" + value)
 
 
 
