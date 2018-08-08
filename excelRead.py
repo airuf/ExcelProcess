@@ -238,8 +238,20 @@ class ClerkInfo():
 
     def total_result(self):
         # add up to all orders
-        a = 1
-
+        self.number_of_orders = len(self.orders)
+        store_service_fee = 0
+        clerk_service_fee = 0
+        gloden_egg_amounts = 0
+        income = 0
+        for order in self.orders
+            store_service_fee += order.store_service_fee
+            clerk_service_fee += order.clerk_service_fee
+            gloden_egg_amounts += order.gloden_egg_amount
+            income += order.income
+        self.all_store_service_fee = store_service_fee
+        self.all_clerk_service_fee = clerk_service_fee
+        self.all_gloden_egg_amounts = gloden_egg_amounts
+        self.all_income = income
 
 ## 所属门店名称 ##
 ## store name  ##       rows[42]
@@ -250,6 +262,8 @@ class StoreInfo():
 
     def add_create_clerk(self, name):
         self.clerks.setdefault(name, ClerkInfo(name))
+
+
 
 
 ## 所属总账户 ##
