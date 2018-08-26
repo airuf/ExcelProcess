@@ -3,25 +3,24 @@ from openpyxl import Workbook
 from openpyxl.styles import PatternFill, Border, Side, Alignment, Protection, Font, colors
 
 from collections import Iterable
+import excelRead
 
-wb = Workbook()
-sheet = wb.active
-sheet.title = "new sheet"
-sheet['C3'] = 'hello'
-
-
-#bold_itatic24_font = Font(name='等线', size=24, italic=True, color = colors.RED, bold=True)
-#sheet['A1'].font = bold_itatic24_font
-# 设置B1中的数据垂直居中和水平居中
-sheet['B1'].alignment = Alignment(horizontal = 'center', vertical = 'center')
-# 第2行行高
-sheet.row_dimensions[2].height = 40
-# C列列宽
-sheet.column_dimensions['C'].width = 40
-
-for i in range(10):
-    sheet["A%d" % (i+1)].value = i+1
-sheet["E1"].value = "=SUM(A:A)"
+# sheet.title = "new sheet"
+# sheet['C3'] = 'hello'
+#
+#
+# #bold_itatic24_font = Font(name='等线', size=24, italic=True, color = colors.RED, bold=True)
+# #sheet['A1'].font = bold_itatic24_font
+# # 设置B1中的数据垂直居中和水平居中
+# sheet['B1'].alignment = Alignment(horizontal = 'center', vertical = 'center')
+# # 第2行行高
+# sheet.row_dimensions[2].height = 40
+# # C列列宽
+# sheet.column_dimensions['C'].width = 40
+#
+# for i in range(10):
+#     sheet["A%d" % (i+1)].value = i+1
+# sheet["E1"].value = "=SUM(A:A)"
 
 # sheet.merge_cells('B1:G1') # 合并一行中的几个单元格
 # sheet.merge_cells('A1:C3') # 合并一个矩形区域中的单元格
@@ -80,11 +79,69 @@ def set_border(sheet, cell_scope):
                 _cell.border = _border
 
 
-format_init(sheet)
-set_border(sheet,'A36')
+# format_init(sheet)
+# set_border(sheet,'A36')
 
 
-wb.save("data/saveNew.xlsx")
+
+#set company title
+def title_init(sheet, company_name):
+    A1_fill = PatternFill(fill_type = 'solid', start_color = colors.YELLOW, end_color = colors.BLUE)
+    A1_font = Font(name = '微软雅黑', size = 14, bold = True, color = 'FF000000')
+    A1_alignment = Alignment(horizontal = 'center', vertical = 'center')
+    A1_border = Border(left = Side(border_style = 'thick', color = colors.BLACK),
+                       right = Side(border_style = 'thick', color = colors.BLACK),
+                       top = Side(border_style = 'thick', color = colors.BLACK),
+                       bottom = Side(border_style = 'thick', color = colors.BLACK))
+    sheet['A1'].font = A1_font
+    sheet['A1'].fill = A1_fill
+    sheet['A1'].alignment = A1_alignment
+    sheet['A1'].border = A1_border
+    sheet.merge_cells('A1:I1')  #target cell   A1
+    sheet.row_dimensions[1].height = 40
+    sheet['A1'] = company_name
+    for objsheetcells in sheet['A1:I1']:
+        for cellone in objsheetcells:
+            cellone.border = A1_border
+
+
+def list_detail(sheet, details_list):
+    B_fill = PatternFill(fill_type = 'solid', start_color = colors.YELLOW, end_color = colors.BLUE)
+    B_font = Font(name = '微软雅黑', size = 11, bold = True, color = 'FF000000')
+    B_alignment = Alignment(horizontal = 'center', vertical = 'center')
+    B_border = Border(left = Side(border_style = 'thick', color = colors.BLACK),
+                       right = Side(border_style = 'thick', color = colors.BLACK),
+                       top = Side(border_style = 'thick', color = colors.BLACK),
+                       bottom = Side(border_style = 'thick', color = colors.BLACK))
+    len_column = details_list.__len__()
+    for x in range(len_column):
+        addr = chr(65 + x) + '2'
+        sheet[addr] = details_list[x]
+        sheet.column_dimensions[chr(65 + x)].width = details_list[x].__len__()*2.3
+        sheet[addr].font = B_font
+        sheet[addr].fill = B_fill
+        sheet[addr].alignment = B_alignment
+        sheet[addr].border = B_border
+    # for x in range(len_column):
+    #     sheet.row_values(2)[x] =1;
+
+def total_set(sheet, range, data):
+    sheet.merge_cells(range)  # target cell   A1
+    addr = range.split(':')
+    sheet[addr[0]] = data
+
+
+def creat_target_file(x):
+    OrderInfo(x)
+    wb = Workbook()
+    sheet = wb.active
+    title_init(sheet, '花苑')
+    list = ['排名', '门店名称', '经办人', '成交单数', '商家服务费', '店员服务费', '金蛋金额', '店员收入合计', '门店服务费合计']
+    list_detail(sheet, list)
+    total_set(sheet, 'A5:C5', 22)
+    #
+
+    wb.save("data/saveNew.xlsx")
 
 
 
