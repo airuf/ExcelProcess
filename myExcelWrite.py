@@ -1,9 +1,12 @@
 import openpyxl
+import myExcelRead
 from openpyxl import Workbook
 from openpyxl.styles import PatternFill, Border, Side, Alignment, Protection, Font, colors
 
 from collections import Iterable
-import excelRead
+
+
+
 
 # sheet.title = "new sheet"
 # sheet['C3'] = 'hello'
@@ -122,6 +125,7 @@ def list_detail(sheet, details_list):
         sheet[addr].fill = B_fill
         sheet[addr].alignment = B_alignment
         sheet[addr].border = B_border
+
     # for x in range(len_column):
     #     sheet.row_values(2)[x] =1;
 
@@ -131,8 +135,9 @@ def total_set(sheet, range, data):
     sheet[addr[0]] = data
 
 
-def creat_target_file(x):
-    OrderInfo(x)
+def creat_target_file(StoreInfo):
+    _StoreInfo = myExcelRead.MasterAccount(' ')
+    _StoreInfo = StoreInfo
     wb = Workbook()
     sheet = wb.active
     title_init(sheet, '花苑')
@@ -141,8 +146,14 @@ def creat_target_file(x):
     total_set(sheet, 'A5:C5', 22)
     #
 
-    wb.save("data/saveNew.xlsx")
+    # print message of StoreInfo
+    x = myExcelRead.StoreInfo(' ')
+    for x in _StoreInfo.store.values():
+        b = x
+        b.get_num_clerks()
+        print(b.num_of_clerks)
+        # print(b.clerks)
 
+    wb.save("data/"+str(_StoreInfo.name)+".xlsx")
 
-
-
+creat_target_file(myExcelRead.test_me())
