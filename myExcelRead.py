@@ -187,11 +187,15 @@ class ClerkInfo():
         clerk_service_fee = 0
         gloden_egg_amounts = 0
         income = 0
-        for order in self.orders:
+        for order in self.orders.values():
             store_service_fee += order.store_service_fee
             clerk_service_fee += order.clerk_service_fee
-            gloden_egg_amounts += order.gloden_egg_amount
-            income += order.income
+            ##TODO:
+            #    gloden_egg_amounts += 0
+            #else:
+            #    print(order.gloden_egg_amount, type(order.gloden_egg_amount))
+            #    gloden_egg_amounts += order.gloden_egg_amount
+            income += order.final_price
         self.all_store_service_fee = store_service_fee
         self.all_clerk_service_fee = clerk_service_fee
         self.all_gloden_egg_amounts = gloden_egg_amounts
@@ -219,16 +223,17 @@ class StoreInfo(object):
 
     def total_result(self):
         # add up to all clerks income
-        self.number_of_orders = len(self.orders)
+        # self.number_of_orders = len(self.orders)
         store_service_fee = 0
         clerk_service_fee = 0
         gloden_egg_amounts = 0
         income = 0
-        for order in self.orders:
-            store_service_fee += order.store_service_fee
-            clerk_service_fee += order.clerk_service_fee
-            gloden_egg_amounts += order.gloden_egg_amount
-            income += order.income
+        for clerks in self.clerks.values():
+            clerks.total_result()
+            store_service_fee += clerks.all_store_service_fee
+            clerk_service_fee += clerks.all_clerk_service_fee
+            gloden_egg_amounts += clerks.all_gloden_egg_amounts
+            income += clerks.all_income
         self.all_store_service_fee = store_service_fee
         self.all_clerk_service_fee = clerk_service_fee
         self.all_gloden_egg_amounts = gloden_egg_amounts

@@ -143,15 +143,28 @@ def creat_target_file(StoreInfo):
     title_init(sheet, '花苑')
     list = ['排名', '门店名称', '经办人', '成交单数', '商家服务费', '店员服务费', '金蛋金额', '店员收入合计', '门店服务费合计']
     list_detail(sheet, list)
-    total_set(sheet, 'A5:C5', 22)
+    #total_set(sheet, 'A5:C5', 22)
     #
 
     # print message of StoreInfo
     x = myExcelRead.StoreInfo(' ')
+    store_position = 3;
     for x in _StoreInfo.store.values():
         b = x
         b.get_num_clerks()
-        print(b.num_of_clerks)
+        print("numbers:", b.num_of_clerks)
+        addr = str('A' + str(store_position) + ':' + 'A' + str(b.num_of_clerks+store_position-1))
+        total_set(sheet, addr, b.num_of_clerks)
+        addr = str('B' + str(store_position) + ':' + 'B' + str(b.num_of_clerks + store_position - 1))
+        total_set(sheet, addr, b.name)
+        #print(b.name)
+
+        #
+        b.total_result()
+
+        store_position = store_position+b.num_of_clerks
+        print("pos ",store_position)
+
         # print(b.clerks)
 
     wb.save("data/"+str(_StoreInfo.name)+".xlsx")
