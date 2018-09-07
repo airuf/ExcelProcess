@@ -1,5 +1,6 @@
 import openpyxl
 import myExcelRead
+import operator
 from openpyxl import Workbook
 from openpyxl.styles import PatternFill, Border, Side, Alignment, Protection, Font, colors
 
@@ -149,24 +150,39 @@ def creat_target_file(StoreInfo):
     # print message of StoreInfo
     x = myExcelRead.StoreInfo(' ')
     store_position = 3;
+
+    #Form ordering
+    ordering_list = []
     for x in _StoreInfo.store.values():
+        x.total_result()
+    # for x in _StoreInfo.store.items():
+        # print("obj", x, x[1], type(x))
+        # print("all income ", x[1].all_income)
+    _StoreInfo = sorted(_StoreInfo.store.items(), key = lambda store:store[1].all_income, reverse=True)
+
+    for m in _StoreInfo:
+        x = m[1]
         b = x
         b.get_num_clerks()
-        print("numbers:", b.num_of_clerks)
+        # print("numbers:", b.num_of_clerks)
+        #TODO:set the number of rank to this merge cell
         addr = str('A' + str(store_position) + ':' + 'A' + str(b.num_of_clerks+store_position-1))
         total_set(sheet, addr, b.num_of_clerks)
+
         addr = str('B' + str(store_position) + ':' + 'B' + str(b.num_of_clerks + store_position - 1))
         total_set(sheet, addr, b.name)
+        addr = str('I' + str(store_position) + ':' + 'I' + str(b.num_of_clerks + store_position - 1))
+        total_set(sheet, addr, b.all_income)
         #print(b.name)
 
         #
-        b.total_result()
+        print(b.name, "income", b.all_income)
 
         store_position = store_position+b.num_of_clerks
-        print("pos ",store_position)
+        # print("pos ",store_position)
 
         # print(b.clerks)
 
-    wb.save("data/"+str(_StoreInfo.name)+".xlsx")
+    wb.save("data/"+str(StoreInfo.name)+".xlsx")
 
 creat_target_file(myExcelRead.test_me())

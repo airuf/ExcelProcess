@@ -191,11 +191,11 @@ class ClerkInfo():
             store_service_fee += order.store_service_fee
             clerk_service_fee += order.clerk_service_fee
             ##TODO:
-            #    gloden_egg_amounts += 0
-            #else:
-            #    print(order.gloden_egg_amount, type(order.gloden_egg_amount))
-            #    gloden_egg_amounts += order.gloden_egg_amount
-            income += order.final_price
+            if isinstance(order.gloden_egg_amount, str):
+                gloden_egg_amounts += 0
+            else:
+                gloden_egg_amounts += order.gloden_egg_amount
+            income = clerk_service_fee + gloden_egg_amounts
         self.all_store_service_fee = store_service_fee
         self.all_clerk_service_fee = clerk_service_fee
         self.all_gloden_egg_amounts = gloden_egg_amounts
@@ -372,7 +372,7 @@ def test_me():
     sum = 0
     for i in clerk_order_dic.values():
         sum += i
-    print("sum : ",sum)
+    # print("sum : ",sum)
     # print(clerk_order_dic)
 
 
