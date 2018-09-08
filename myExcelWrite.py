@@ -167,7 +167,7 @@ def creat_target_file(StoreInfo):
         # print("numbers:", b.num_of_clerks)
         #TODO:set the number of rank to this merge cell
         addr = str('A' + str(store_position) + ':' + 'A' + str(b.num_of_clerks+store_position-1))
-        total_set(sheet, addr, b.num_of_clerks)
+        total_set(sheet, addr, b.rank)
 
         addr = str('B' + str(store_position) + ':' + 'B' + str(b.num_of_clerks + store_position - 1))
         total_set(sheet, addr, b.name)
@@ -175,8 +175,16 @@ def creat_target_file(StoreInfo):
         total_set(sheet, addr, b.all_income)
         #print(b.name)
 
-        #
-        print(b.name, "income", b.all_income)
+        num = 0
+        listMe = []
+        for meme in b.clerks.values():
+            listMe.append(meme)
+            #TODO:
+        for addr in range(store_position, b.num_of_clerks+store_position):
+            sheet[str('C'+addr)] = str(listMe[num].name)
+            num = num+1
+
+        # print(b.name, "income", b.all_income)
 
         store_position = store_position+b.num_of_clerks
         # print("pos ",store_position)

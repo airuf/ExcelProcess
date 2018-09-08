@@ -17,6 +17,7 @@ import xlrd
 # 名字 name
 # 手机 phone number
 # 订单 orders
+# 排名 rank
 
 ## 单子信息 ##
 ## order infor ##
@@ -176,6 +177,7 @@ class ClerkInfo():
         self.all_clerk_service_fee = 0
         self.all_gloden_egg_amounts = 0
         self.all_income = 0
+        self.rank = 0
 
     def add_create_order(self, order_number):
         self.orders.setdefault(order_number, OrderInfo(order_number))
@@ -228,12 +230,22 @@ class StoreInfo(object):
         clerk_service_fee = 0
         gloden_egg_amounts = 0
         income = 0
+        sortList = []
         for clerks in self.clerks.values():
             clerks.total_result()
             store_service_fee += clerks.all_store_service_fee
             clerk_service_fee += clerks.all_clerk_service_fee
             gloden_egg_amounts += clerks.all_gloden_egg_amounts
             income += clerks.all_income
+            sortList.append((clerks, clerks.all_income))
+
+        sortList = sorted(sortList, key = lambda ele:ele[1], reverse = True)
+
+        #for clerks in self.clerks.values():
+        self.clerks.clear()
+        for clerk in sortList:
+            self.clerks.setdefault(clerk[0].name, clerk[0])
+            clerk[0].rank = sortList.index(clerk)+1
         self.all_store_service_fee = store_service_fee
         self.all_clerk_service_fee = clerk_service_fee
         self.all_gloden_egg_amounts = gloden_egg_amounts
@@ -250,6 +262,17 @@ class MasterAccount(object):
     def add_create_store(self, name):
         self.store.setdefault(name, StoreInfo(name))
 
+    def sort_store(self):
+        sortList = []
+        for store in self.store.values():
+            store.total_result()
+            sortList.append((store, store.all_income))
+        sortList = sorted(sortList, key = lambda ele:ele[1], reverse = True)
+        #for clerks in self.clerks.values():
+        self.store.clear()
+        for store in sortList:
+            self.store.setdefault(store[0].name, store[0])
+            store[0].rank = sortList.index(store)+1
 
 
 def test_me():
@@ -383,7 +406,17 @@ def test_me():
                 a =1
                 #print("#####下面是问题单#####")
             #print('名字',   sheet2.row_values(i)[2],  '统计的',   sheet2.row_values(i)[3],  '原生数据里的',   clerk_order_dic[sheet2.row_values(i)[2]])
+    HY.sort_store()
     print(x)
+   # HY.store = sorted(_StoreInfo.store.items(), key = lambda store: store[1].all_income, reverse = True)
+
+
+    print("end")
+    #sort info
     return HY
 
 
+def sortedDictValues1(adict):
+    keys = adict.keys()
+    keys.sort()
+    return map (adict.get(), keys)
