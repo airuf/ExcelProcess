@@ -5,7 +5,7 @@ from openpyxl import Workbook
 from openpyxl.styles import PatternFill, Border, Side, Alignment, Protection, Font, colors
 
 from collections import Iterable
-
+import decimal
 
 
 
@@ -181,9 +181,13 @@ def creat_target_file(StoreInfo):
             listMe.append(meme)
             #TODO:
         for addr in range(store_position, b.num_of_clerks+store_position):
-            sheet[str('C'+addr)] = str(listMe[num].name)
+            sheet[str('C'+str(addr))] = str(listMe[num].name)
+            sheet[str('D' + str(addr))] = str(decimal.Decimal(listMe[num].number_of_orders).quantize(decimal.Decimal('0.00')))
+            sheet[str('E' + str(addr))] = str(decimal.Decimal(listMe[num].all_store_service_fee).quantize(decimal.Decimal('0.00')))
+            sheet[str('F' + str(addr))] = str(decimal.Decimal(listMe[num].all_clerk_service_fee).quantize(decimal.Decimal('0.00')))
+            sheet[str('G' + str(addr))] = str(decimal.Decimal(listMe[num].all_gloden_egg_amounts).quantize(decimal.Decimal('0.00')))
+            sheet[str('H' + str(addr))] = str(decimal.Decimal(listMe[num].all_income).quantize(decimal.Decimal('0.00')))
             num = num+1
-
         # print(b.name, "income", b.all_income)
 
         store_position = store_position+b.num_of_clerks
